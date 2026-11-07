@@ -1,3 +1,5 @@
+"""Utilidades para formatear la respuesta del análisis de emociones."""
+
 from flask import Flask, render_template, request
 from EmotionDetection.emotion_detection import emotion_detector
 
@@ -5,11 +7,16 @@ app = Flask("Emotion Detector")
 
 @app.route("/emotionDetector")
 def sent_emotion_detector():
+    """Función para formatear la respuesta del análisis de emociones."""
     text_to_analyze = request.args.get('textToAnalyze')
+    invalid_text = "Invalid text! Please try again!"
     if not text_to_analyze:
-        return "Value can't be empty."
+        return invalid_text
 
     response = emotion_detector(text_to_analyze)
+
+    if not response['dominant_emotion']:
+        return invalid_text
 
     return (
         f"For the given statement, the system response is "
@@ -23,7 +30,8 @@ def sent_emotion_detector():
 
 @app.route("/")
 def render_index_page():
+    '''Root path'''
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5001)
